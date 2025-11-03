@@ -9,9 +9,15 @@ import SwiftUI
 
 @main
 struct BestFruitsApp: App {
+    @AppStorage("hasCompletedOnboarding") var hasCompletedOnboarding = false
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            if hasCompletedOnboarding {
+                ContentView()
+            } else {
+                OnboardingView()
+            }
         }
     }
 }
