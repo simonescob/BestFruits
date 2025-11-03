@@ -18,7 +18,7 @@ class SearchFruitsUseCase {
     /// Execute search with comprehensive criteria
     func execute(
         query: String,
-        filters: SearchFilters = SearchFilters()
+        filters: SearchFilters = SearchFilters.default()
     ) async throws -> [Fruit] {
         
         // Fetch all fruits first (could be optimized with server-side search)
@@ -130,6 +130,8 @@ class SearchFruitsUseCase {
     }
 }
 
+// SortOption is defined in FetchFruitsUseCase.swift
+
 /// Advanced search filters
 struct SearchFilters: Equatable {
     let categories: [String]
@@ -162,5 +164,12 @@ struct SearchFilters: Equatable {
         self.favoritesOnly = favoritesOnly
         self.difficulties = difficulties
         self.sortBy = sortBy
+    }
+    
+    /// Create default search filters
+    static func `default`() -> SearchFilters {
+        return SearchFilters(
+            sortBy: .name
+        )
     }
 }

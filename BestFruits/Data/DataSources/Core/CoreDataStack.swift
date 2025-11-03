@@ -60,14 +60,14 @@ class CoreDataStack {
     // MARK: - Fetch Request Templates
     
     func fetchFruitEntities() throws -> [FruitEntity] {
-        let fetchRequest: NSFetchRequest<FruitEntity> = FruitEntity.fetchRequest()
+        let fetchRequest = NSFetchRequest<FruitEntity>(entityName: "FruitEntity")
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
         
         return try context.fetch(fetchRequest)
     }
     
     func fetchFruitEntity(id: UUID) -> FruitEntity? {
-        let fetchRequest: NSFetchRequest<FruitEntity> = FruitEntity.fetchRequest()
+        let fetchRequest = NSFetchRequest<FruitEntity>(entityName: "FruitEntity")
         fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
         fetchRequest.fetchLimit = 1
         
@@ -80,7 +80,7 @@ class CoreDataStack {
     }
     
     func fetchFavorites() throws -> [FruitEntity] {
-        let fetchRequest: NSFetchRequest<FruitEntity> = FruitEntity.fetchRequest()
+        let fetchRequest = NSFetchRequest<FruitEntity>(entityName: "FruitEntity")
         fetchRequest.predicate = NSPredicate(format: "isFavorite == YES")
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
         

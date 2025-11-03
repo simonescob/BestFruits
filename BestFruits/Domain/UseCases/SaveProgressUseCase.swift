@@ -82,6 +82,11 @@ class SaveProgressUseCase {
         return try await progressRepository.toggleFavorite(fruitId: fruitId)
     }
     
+    /// Get user progress for a fruit
+    func getProgress(for fruitId: UUID) async throws -> UserProgress? {
+        return try await progressRepository.fetchProgress(for: fruitId)
+    }
+    
     /// Get study statistics
     func getStudyStatistics() async throws -> StudyStatistics {
         return try await progressRepository.getStudyStatistics()

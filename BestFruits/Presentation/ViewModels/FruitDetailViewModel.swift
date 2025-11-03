@@ -40,12 +40,20 @@ class FruitDetailViewModel: ObservableObject {
     ) {
         self.fruit = fruit
         self.fruitRepository = fruitRepository ?? FruitRepository()
-        self.saveProgressUseCase = saveProgressUseCase ?? Self.defaultSaveProgressUseCase()
+        
+        // Create default saveProgressUseCase if not provided
+        if let saveProgressUseCase = saveProgressUseCase {
+            self.saveProgressUseCase = saveProgressUseCase
+        } else {
+            // Create a mock repository for now - in production this would be a real repository
+            let mockRepository = MockProgressRepository()
+            self.saveProgressUseCase = SaveProgressUseCase(progressRepository: mockRepository)
+        }
+        
         self.fetchFruitUseCase = FetchFruitsUseCase(fruitRepository: self.fruitRepository)
         
-        if fruit != nil {
-            loadUserProgress()
-        }
+        // Note: loadUserProgress() should be called manually after initialization
+        // to avoid async calls in init
     }
     
     // MARK: - Public Methods
@@ -176,7 +184,25 @@ class FruitDetailViewModel: ObservableObject {
             let isFavorite = try await saveProgressUseCase.toggleFavorite(fruitId: fruit.id)
             
             await MainActor.run {
-                self.fruit?.isFavorite = isFavorite
+                // Create new fruit instance with updated favorite status
+                if let currentFruit = self.fruit {
+                    self.fruit = Fruit(
+                        id: currentFruit.id,
+                        name: currentFruit.name,
+                        scientificName: currentFruit.scientificName,
+                        description: currentFruit.description,
+                        imageURL: currentFruit.imageURL,
+                        nutritionalInfo: currentFruit.nutritionalInfo,
+                        origin: currentFruit.origin,
+                        season: currentFruit.season,
+                        categories: currentFruit.categories,
+                        funFacts: currentFruit.funFacts,
+                        quizQuestions: currentFruit.quizQuestions,
+                        isFavorite: isFavorite,
+                        createdAt: currentFruit.createdAt,
+                        updatedAt: Date()
+                    )
+                }
             }
         } catch {
             await MainActor.run {
@@ -209,7 +235,8 @@ class FruitDetailViewModel: ObservableObject {
         guard let fruit = fruit else { return }
         
         do {
-            let progress = try await saveProgressUseCase.progressRepository.fetchProgress(for: fruit.id)
+            // Use the proper method from SaveProgressUseCase instead of accessing private repository
+            let progress = try await saveProgressUseCase.getProgress(for: fruit.id)
             await MainActor.run {
                 userProgress = progress
                 notesText = progress?.progress.notes ?? ""

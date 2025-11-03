@@ -261,11 +261,11 @@ struct FruitDetailView: View {
             if let fruit = viewModel.fruit {
                 VStack(spacing: 12) {
                     nutritionRow(title: "Calories", value: "\(fruit.nutritionalInfo.calories) kcal")
-                    nutritionRow(title: "Protein", value: "\(fruit.nutritionalInfo.protein, specifier: "%.1f") g")
-                    nutritionRow(title: "Fiber", value: "\(fruit.nutritionalInfo.fiber, specifier: "%.1f") g")
-                    nutritionRow(title: "Vitamin C", value: "\(fruit.nutritionalInfo.vitaminC, specifier: "%.1f") mg")
-                    nutritionRow(title: "Potassium", value: "\(fruit.nutritionalInfo.potassium, specifier: "%.1f") mg")
-                    nutritionRow(title: "Water Content", value: "\(fruit.nutritionalInfo.waterContent, specifier: "%.1f")%")
+                    nutritionRow(title: "Protein", value: String(format: "%.1f", fruit.nutritionalInfo.protein) + " g")
+                    nutritionRow(title: "Fiber", value: String(format: "%.1f", fruit.nutritionalInfo.fiber) + " g")
+                    nutritionRow(title: "Vitamin C", value: String(format: "%.1f", fruit.nutritionalInfo.vitaminC) + " mg")
+                    nutritionRow(title: "Potassium", value: String(format: "%.1f", fruit.nutritionalInfo.potassium) + " mg")
+                    nutritionRow(title: "Water Content", value: String(format: "%.1f", fruit.nutritionalInfo.waterContent) + "%")
                 }
             }
             
@@ -315,8 +315,9 @@ struct FruitDetailView: View {
                 EmptyStateView(
                     icon: "questionmark.circle",
                     title: "No Quiz Available",
-                    message: "Quiz questions for this fruit are not available yet."
-                )
+                    message: "Quiz questions for this fruit are not available yet.",
+                    actionTitle: "OK"
+                ) {}
             } else if let fruit = viewModel.fruit, !fruit.quizQuestions.isEmpty {
                 quizContent(fruit)
             }
@@ -506,9 +507,6 @@ struct FruitDetailView_Previews: PreviewProvider {
             name: "Apple",
             scientificName: "Malus domestica",
             description: "A sweet and crunchy fruit that's perfect for snacking.",
-            origin: "Central Asia",
-            categories: ["Apples & Pears"],
-            season: [.autumn, .winter],
             nutritionalInfo: NutritionalInfo(
                 calories: 52,
                 protein: 0.3,
@@ -517,6 +515,9 @@ struct FruitDetailView_Previews: PreviewProvider {
                 potassium: 107,
                 waterContent: 86
             ),
+            origin: "Central Asia",
+            season: [.autumn, .winter],
+            categories: ["Apples & Pears"],
             funFacts: [
                 "Apples float because they are 25% air",
                 "There are over 7,500 varieties of apples worldwide"

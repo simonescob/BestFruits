@@ -138,10 +138,28 @@ class FruitListViewModel: ObservableObject {
         do {
             let isFavorite = try await saveProgressUseCase.toggleFavorite(fruitId: fruit.id)
             
-            // Update local fruit object
-            if let index = fruits.firstIndex(where: { $0.id == fruit.id }) {
-                await MainActor.run {
-                    self.fruits[index].isFavorite = isFavorite
+            // Update local fruit object by creating new array with updated fruit
+            await MainActor.run {
+                var updatedFruits = self.fruits
+                if let index = updatedFruits.firstIndex(where: { $0.id == fruit.id }) {
+                    let currentFruit = updatedFruits[index]
+                    updatedFruits[index] = Fruit(
+                        id: currentFruit.id,
+                        name: currentFruit.name,
+                        scientificName: currentFruit.scientificName,
+                        description: currentFruit.description,
+                        imageURL: currentFruit.imageURL,
+                        nutritionalInfo: currentFruit.nutritionalInfo,
+                        origin: currentFruit.origin,
+                        season: currentFruit.season,
+                        categories: currentFruit.categories,
+                        funFacts: currentFruit.funFacts,
+                        quizQuestions: currentFruit.quizQuestions,
+                        isFavorite: isFavorite,
+                        createdAt: currentFruit.createdAt,
+                        updatedAt: Date()
+                    )
+                    self.fruits = updatedFruits
                 }
             }
         } catch {

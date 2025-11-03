@@ -8,17 +8,26 @@
 import Foundation
 
 /// Domain entity for tracking user learning progress
-struct UserProgress: Identifiable, Codable, Equatable {
-    let id: UUID
-    let userId: String
-    let fruitId: UUID
-    let progress: LearningProgress
-    let quizScores: [QuizScore]
-    let bookmarks: [UUID] // Fruit IDs
-    let studyTime: TimeInterval // in seconds
-    let lastAccessedAt: Date
-    let createdAt: Date
-    let updatedAt: Date
+class UserProgress: Identifiable, Codable, Equatable {
+    var id: UUID
+    var userId: String
+    var fruitId: UUID
+    var progress: LearningProgress
+    var quizScores: [QuizScore]
+    var bookmarks: [UUID] // Fruit IDs
+    var studyTime: TimeInterval // in seconds
+    var lastAccessedAt: Date
+    var createdAt: Date
+    var updatedAt: Date
+    
+    // Equatable conformance
+    static func == (lhs: UserProgress, rhs: UserProgress) -> Bool {
+        return lhs.id == rhs.id &&
+               lhs.userId == rhs.userId &&
+               lhs.fruitId == rhs.fruitId &&
+               lhs.quizScores == rhs.quizScores &&
+               lhs.studyTime == rhs.studyTime
+    }
     
     init(
         id: UUID = UUID(),
@@ -46,13 +55,23 @@ struct UserProgress: Identifiable, Codable, Equatable {
 }
 
 /// Learning progress tracking
-struct LearningProgress: Codable, Equatable {
-    let readingProgress: Double // 0.0 to 1.0
-    let quizCompleted: Bool
-    let quizzesPassed: Int
-    let totalQuizzes: Int
-    let favoriteStatus: Bool
-    let notes: String
+class LearningProgress: Codable, Equatable {
+    var readingProgress: Double // 0.0 to 1.0
+    var quizCompleted: Bool
+    var quizzesPassed: Int
+    var totalQuizzes: Int
+    var favoriteStatus: Bool
+    var notes: String
+    
+    // Equatable conformance
+    static func == (lhs: LearningProgress, rhs: LearningProgress) -> Bool {
+        return lhs.readingProgress == rhs.readingProgress &&
+               lhs.quizCompleted == rhs.quizCompleted &&
+               lhs.quizzesPassed == rhs.quizzesPassed &&
+               lhs.totalQuizzes == rhs.totalQuizzes &&
+               lhs.favoriteStatus == rhs.favoriteStatus &&
+               lhs.notes == rhs.notes
+    }
     
     init(
         readingProgress: Double = 0.0,
@@ -83,7 +102,7 @@ struct LearningProgress: Codable, Equatable {
     
     /// Check if learning is complete
     var isComplete: Bool {
-        return readingProgress >= 1.0 && quizCompleted && quizScores.isEmpty == false
+        return readingProgress >= 1.0 && quizCompleted && totalQuizzes > 0
     }
 }
 
@@ -127,16 +146,26 @@ struct QuizScore: Codable, Equatable {
 }
 
 /// Achievement tracking
-struct Achievement: Identifiable, Codable, Equatable {
-    let id: UUID
-    let name: String
-    let description: String
-    let icon: String
-    let category: AchievementCategory
-    let targetValue: Int
-    let currentValue: Int
-    let isUnlocked: Bool
-    let unlockedAt: Date?
+class Achievement: Identifiable, Codable, Equatable {
+    var id: UUID
+    var name: String
+    var description: String
+    var icon: String
+    var category: AchievementCategory
+    var targetValue: Int
+    var currentValue: Int
+    var isUnlocked: Bool
+    var unlockedAt: Date?
+    
+    // Equatable conformance
+    static func == (lhs: Achievement, rhs: Achievement) -> Bool {
+        return lhs.id == rhs.id &&
+               lhs.name == rhs.name &&
+               lhs.category == rhs.category &&
+               lhs.targetValue == rhs.targetValue &&
+               lhs.currentValue == rhs.currentValue &&
+               lhs.isUnlocked == rhs.isUnlocked
+    }
     
     init(
         id: UUID = UUID(),
@@ -166,7 +195,7 @@ struct Achievement: Identifiable, Codable, Equatable {
     }
     
     /// Check if achievement should be unlocked
-    mutating func checkUnlock() {
+    func checkUnlock() {
         if !isUnlocked && currentValue >= targetValue {
             isUnlocked = true
             unlockedAt = Date()

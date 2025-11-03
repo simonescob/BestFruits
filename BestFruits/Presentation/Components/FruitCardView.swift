@@ -127,7 +127,7 @@ struct FruitCardView: View {
                     Divider()
                     
                     VStack {
-                        Text("\(fruit.nutritionalInfo.fiber, specifier: "%.1f")g")
+                        Text(String(format: "%.1f", fruit.nutritionalInfo.fiber) + "g")
                             .font(.caption)
                             .fontWeight(.semibold)
                         Text("Fiber")
@@ -136,10 +136,20 @@ struct FruitCardView: View {
                     }
                 }
                 
-                // Progress indicator (if user has progress)
-                ProgressView(value: fruit.progressPercentage)
-                    .progressViewStyle(LinearProgressViewStyle(tint: .blue))
-                    .scaleEffect(y: 2)
+                // Progress indicator placeholder (if user has progress)
+                if fruit.isFavorite {
+                    HStack {
+                        Image(systemName: "heart.fill")
+                            .foregroundColor(.red)
+                            .font(.caption)
+                        
+                        Text("Favorite")
+                            .font(.caption)
+                            .foregroundColor(.red)
+                        
+                        Spacer()
+                    }
+                }
             }
         }
         .padding(Constants.UI.cardPadding)
@@ -166,9 +176,6 @@ struct FruitCardView_Previews: PreviewProvider {
             name: "Apple",
             scientificName: "Malus domestica",
             description: "A sweet and crunchy fruit that's perfect for snacking.",
-            origin: "Central Asia",
-            categories: ["Apples & Pears", "Temperate"],
-            season: [.autumn, .winter],
             nutritionalInfo: NutritionalInfo(
                 calories: 52,
                 protein: 0.3,
@@ -176,7 +183,10 @@ struct FruitCardView_Previews: PreviewProvider {
                 vitaminC: 4.6,
                 potassium: 107,
                 waterContent: 86
-            )
+            ),
+            origin: "Central Asia",
+            season: [.autumn, .winter],
+            categories: ["Apples & Pears", "Temperate"]
         )
         
         FruitCardView(
